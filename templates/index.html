@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SDMIT Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInPage {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    body {
+      animation: fadeInPage 0.8s ease-in-out;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    /* Table styling */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border: 1px solid #d1d5db;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #eef2ff;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+
+    .bot-message table { width: 100%; }
+    .bot-message {
+      width: 100%;
+      max-width: none;
+      border-radius: 12px;
+      background-color: #f9fafb;
+      padding: 16px;
+      margin: 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Day heading styling */
+    .day-heading {
+      font-weight: 700;
+      color: #1505c7;
+      background: #eef2ff;
+      border-radius: 8px;
+      padding: 6px 10px;
+      display: inline-block;
+      margin-top: 15px;
+      margin-bottom: 8px;
+      text-align: left;
+      margin-left: 45%;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+
+  <div class="relative z-10 bg-white shadow-xl rounded-3xl p-6 w-full max-w-5xl border border-gray-200">
+    <h1 class="text-2xl md:text-3xl font-bold text-indigo-700 mb-3 text-center">🎓 SDMIT STUDENT HELPDESK</h1>
+
+    <div class="flex justify-center mb-3">
+      <img src="{{ url_for('static', filename='logo1.png') }}" 
+           alt="College Logo" 
+           class="w-24 h-24 md:w-28 md:h-28 rounded-full shadow-sm border border-gray-300 object-cover">
+    </div>
+
+    <p class="text-center text-gray-600 italic mb-5">Your Smart Campus Assistant 🤖</p>
+
+    <div id="chatArea" class="h-[36rem] overflow-y-auto bg-gray-50 rounded-2xl shadow-inner border border-gray-200 p-4 mb-4"></div>
+
+    <div class="flex flex-wrap justify-center gap-2 mb-4">
+      <button class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700" 
+              onclick="msgInput.value='timetable'; send()">Timetable</button>
+      <button class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700" 
+              onclick="msgInput.value='exams'; send()">Exams</button>
+      <button class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700" 
+              onclick="msgInput.value='courses'; send()">Courses & Fees</button>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4 justify-center">
+      <select id="branch" class="border rounded-lg p-2 text-sm flex-1 min-w-[100px]">
+        <option value="">Branch</option>
+        <option value="CSE">CSE</option>
+        <option value="ADE">ADE</option>
+        <option value="ECE">ECE</option>
+        <option value="EEE">EEE</option>
+        <option value="CIVIL">Civil</option>
+      </select>
+
+      <select id="semester" class="border rounded-lg p-2 text-sm flex-1 min-w-[100px]">
+        <option value="">Semester</option>
+        <option value="1">1st</option>
+        <option value="2">2nd</option>
+        <option value="3">3rd</option>
+        <option value="4">4th</option>
+        <option value="5">5th</option>
+        <option value="6">6th</option>
+        <option value="7">7th</option>
+        <option value="8">8th</option>
+      </select>
+
+      <select id="section" class="border rounded-lg p-2 text-sm flex-1 min-w-[100px]">
+        <option value="">Section</option>
+      </select>
+    </div>
+
+    <div class="flex gap-2">
+      <input id="msg" type="text" placeholder="Ask about courses, fees, exams..." 
+             class="flex-1 border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+      <button id="send" 
+              class="bg-indigo-600 text-white px-4 md:px-6 py-2 rounded-xl hover:bg-indigo-700 transition-all text-sm">
+        Send
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const branchSelect = document.getElementById("branch");
+    const sectionSelect = document.getElementById("section");
+    const chatArea = document.getElementById('chatArea');
+    const msgInput = document.getElementById('msg');
+    const sendBtn = document.getElementById('send');
+
+    branchSelect.addEventListener("change", () => {
+      const branch = branchSelect.value;
+      sectionSelect.innerHTML = "<option value=''>Section</option>";
+      if (branch === "CSE" || branch === "ECE") ["A","B"].forEach(s => sectionSelect.appendChild(new Option(s,s)));
+      else if (branch === "ADE" || branch === "EEE" || branch === "CIVIL") sectionSelect.appendChild(new Option("A","A"));
+    });
+
+    // Append messages to chat area
+    function append(role, text) {
+      const div = document.createElement('div');
+      div.className = `my-2 flex ${role==='user'?'justify-end':'justify-start'}`;
+      const bubble = document.createElement('div');
+      bubble.className = `inline-block px-3 py-2 rounded-xl text-sm break-words ${
+        role==='user' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800 bot-message'
+      }`;
+
+      // 💡 Convert repeated Day rows into grouped sections
+      if (role === 'bot' && text.includes('<table')) {
+        // Extract all rows
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = text;
+        const rows = tempDiv.querySelectorAll('tr');
+        const grouped = {};
+
+        rows.forEach(row => {
+          const cells = Array.from(row.children).map(td => td.textContent.trim());
+          if (cells.length === 4 && cells[0].toLowerCase() !== "day") {
+            const [day, time, subject, classroom] = cells;
+            if (!grouped[day]) grouped[day] = [];
+            grouped[day].push({ time, subject, classroom });
+          }
+        });
+
+        // Build formatted HTML
+        let formatted = "";
+        Object.keys(grouped).forEach(day => {
+          formatted += `<div class="day-heading">${day}</div>`;
+          formatted += `<table><tr><th>Time</th><th>Subject</th><th>Classroom</th></tr>`;
+          grouped[day].forEach(r => {
+            formatted += `<tr><td>${r.time}</td><td>${r.subject}</td><td>${r.classroom}</td></tr>`;
+          });
+          formatted += `</table>`;
+        });
+        text = formatted;
+      }
+
+      bubble.innerHTML = text;
+      div.appendChild(bubble);
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // Send message to backend
+    async function send() {
+      const text = msgInput.value.trim();
+      const branch = branchSelect.value;
+      const semester = document.getElementById("semester").value;
+      const section = sectionSelect.value;
+      if (!text) return;
+
+      if ((text.includes("timetable") || text.includes("exam")) && (!branch || !semester || !section)) {
+        append('bot', "⚠️ Please select Branch, Semester, and Section first!");
+        return;
+      }
+      if ((text.includes("course") || text.includes("fee")) && !branch) {
+        append('bot', "⚠️ Please select Branch first!");
+        return;
+      }
+
+      append('user', text);
+      msgInput.value = '';
+
+      try {
+        const res = await fetch('/get_answer', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ message: text, branch, semester, section })
+        });
+        const data = await res.json();
+        append('bot', data.reply || 'No reply from server.');
+      } catch (err) {
+        append('bot', '⚠️ ' + err.message);
+      }
+    }
+
+    sendBtn.addEventListener('click', send);
+    msgInput.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  </script>
+</body>
+</html>
