@@ -1,132 +1,246 @@
-<!-- templates/index.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ADE Info Assistant</title>
+  <title>SDMIT Chatbot</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
-    body { background:#93bdd5; color:#000000; font-family:Inter, system-ui, -apple-system; }
-    .panel { background:#fdfdfd; border:3px solid #222; border-radius:12px; }
-    .bubble { animation: fadeIn .18s ease; }
-    @keyframes fadeIn { from {opacity:0; transform: translateY(6px);} to {opacity:1; transform:none;} }
-    table th { background:#5e2e2e; }
-    table td, table th { padding:10px; }
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    * {
+        font-family: 'Poppins', sans-serif;
+    }
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
-<body class="min-h-screen p-4 flex flex-col items-center">
+<body class="gradient-bg min-h-screen p-4 flex flex-col items-center">
 
-  <header class="w-full max-w-4xl mb-4 flex justify-between items-center">
-    <div>
-      <h1 class="text-2xl font-bold">ADE Info Assistant</h1>
-      <p class="text-sm text-gray-400" style="color: #000000;">Ask about timetable, exams, courses, or exam seating</p>
+  <header class="w-full max-w-6xl mb-8 flex justify-between items-center">
+    <div class="flex items-center space-x-4">
+      <div class="bg-white p-3 rounded-xl shadow-lg">
+        <i class="fas fa-graduation-cap text-2xl text-purple-600"></i>
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold text-white">SDMIT Chatbot</h1>
+        <p class="text-purple-200">Ask about timetable, exams, courses, or exam seating</p>
+      </div>
     </div>
     <div>
-      <a href="/admin" class="bg-neutral-800 px-3 py-2 rounded" style="color: #fdfdfd;">Admin</a>
+      <a href="/admin" class="bg-white text-purple-600 px-4 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors shadow-lg">
+        <i class="fas fa-lock mr-2"></i>Admin Login
+      </a>
     </div>
   </header>
 
-  <main class="w-full max-w-4xl">
-    <div class="flex items-center gap-3 mb-4">
-      <label class="text-gray-300" style="color:#000000"><b>Semester<b></label>
-      <select id="semester" class="bg-neutral-900 text-white px-3 py-2 rounded">
-        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-        <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
-      </select>
-      <button id="btn-timetable" class="ml-4 bg-blue-600 px-4 py-2 rounded">Timetable</button>
-      <button id="btn-exams" class="bg-amber-600 px-3 py-2 rounded">Exams</button>
-      <button id="btn-courses" class="bg-sky-600 px-3 py-2 rounded">Courses</button>
-      <button id="btn-seating" class="bg-emerald-600 px-3 py-2 rounded">Seating</button>
+  <main class="w-full max-w-6xl">
+    <div class="glass-effect rounded-2xl p-6 mb-6">
+      <div class="flex items-center gap-4 mb-4">
+        <label class="text-white text-lg font-semibold">Semester</label>
+        <select id="semester" class="bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold shadow focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+        </select>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <button id="btn-timetable" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg font-semibold hover-lift transition-colors">
+          <i class="fas fa-calendar-alt mr-2"></i>Timetable
+        </button>
+        <button id="btn-exams" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-3 rounded-lg font-semibold hover-lift transition-colors">
+          <i class="fas fa-file-alt mr-2"></i>Exams
+        </button>
+        <button id="btn-courses" class="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-semibold hover-lift transition-colors">
+          <i class="fas fa-book mr-2"></i>Courses
+        </button>
+        <button id="btn-seating" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg font-semibold hover-lift transition-colors">
+          <i class="fas fa-chair mr-2"></i>Seating
+        </button>
+      </div>
     </div>
 
-    <div id="output" class="panel p-4 min-h-[40vh]"></div>
+    <div id="output" class="bg-white rounded-2xl shadow-2xl p-6 min-h-[500px]">
+      <div class="text-center py-12">
+        <i class="fas fa-robot text-6xl text-purple-500 mb-4"></i>
+        <h3 class="text-2xl font-semibold text-gray-700 mb-2">Welcome to SDMIT Assistant</h3>
+        <p class="text-gray-500">Select an option above to view your academic information</p>
+      </div>
+    </div>
   </main>
 
-  <footer class="text-gray-500 mt-6">© 2025 SDMIT ADE</footer>
+  <footer class="text-white mt-8 text-center">
+    <p>© 2025 SDMIT ADE</p>
+  </footer>
 
 <script>
   const out = document.getElementById('output');
   const sem = document.getElementById('semester');
+  let currentData = [];
+  let currentView = '';
 
-  function showHTML(html){ out.innerHTML = html; out.scrollTo({ top:0 }); }
+  function showHTML(html){ 
+    out.innerHTML = html; 
+    out.scrollTo({ top:0 }); 
+  }
+
+  // Search functionality
+  function addSearchFeature(columns) {
+    const searchHtml = `
+      <div class="mb-6">
+        <div class="relative max-w-md mx-auto">
+          <input type="text" id="searchInput" placeholder="Search in ${columns.join(', ')}..." 
+                 class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm">
+          <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+            <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">${columns.length} columns</span>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    const content = out.innerHTML;
+    out.innerHTML = searchHtml + content;
+    
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      filterTable(searchTerm, columns);
+    });
+  }
+
+  function filterTable(searchTerm, columns) {
+    const tables = out.getElementsByTagName('table');
+    if (tables.length === 0) return;
+    
+    const table = tables[0];
+    const tbody = table.getElementsByTagName('tbody')[0];
+    const rows = tbody.getElementsByTagName('tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      let found = false;
+      const cells = row.getElementsByTagName('td');
+      
+      for (let j = 0; j < cells.length; j++) {
+        const cellText = cells[j].textContent.toLowerCase();
+        if (cellText.includes(searchTerm)) {
+          found = true;
+          break;
+        }
+      }
+      
+      if (found) {
+        row.style.display = '';
+        row.classList.add('bg-yellow-50');
+        setTimeout(() => row.classList.remove('bg-yellow-50'), 1000);
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  }
 
   async function loadTimetable(){
-    showHTML('<div class="text-gray-400">Loading timetable...</div>');
+    showHTML('<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-purple-500 mb-3"></i><p class="text-gray-600">Loading timetable...</p></div>');
     const res = await fetch(`/api/timetable?semester=${encodeURIComponent(sem.value)}`);
     const rows = await res.json();
-    if(!rows.length){ showHTML('<div class="text-gray-400">Your Personal Assistant</div>'); return; }
+    if(!rows.length){ showHTML('<div class="text-center py-12 text-gray-500">No timetable found for this semester.</div>'); return; }
 
-    // Group by day (rows already ordered by day, start_time)
     const grouped = {};
     for(const r of rows){
       if(!grouped[r.day]) grouped[r.day] = [];
       grouped[r.day].push(r);
     }
 
-    let html = `<h2 class="text-lg font-semibold mb-3 flex items-center gap-2">📅 Timetable — Semester ${sem.value}</h2>`;
-    html += `<div class="rounded-lg overflow-hidden"><table class="w-full"><thead style="background-color:lightgreen;color:white;"><tr><th>Day</th><th>Time</th><th>Subject</th><th>Room</th></tr></thead><tbody>`;
+    let html = `<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><i class="fas fa-calendar-alt text-blue-500"></i> Timetable — Semester ${sem.value}</h2>`;
+    html += `<div class="rounded-xl overflow-hidden border border-gray-200"><table class="w-full"><thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white"><tr><th class="py-4 px-6 text-left">Day</th><th class="py-4 px-6 text-left">Time</th><th class="py-4 px-6 text-left">Subject</th><th class="py-4 px-6 text-left">Room</th></tr></thead><tbody>`;
 
     for(const day of Object.keys(grouped)){
       const items = grouped[day];
-      // first row with day cell using rowspan
       for(let i=0;i<items.length;i++){
         const it = items[i];
-        html += "<tr style='background-color:rgb(192,192,192);border:1px solid black;'>";
+        const rowClass = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+        html += `<tr class="${rowClass} hover:bg-blue-50 transition-colors">`;
         if(i===0){
-          html += `<td rowspan="${items.length}" style="vertical-align:top; padding:10px; font-weight:600;border:2px solid black;">${day}</td>`;
+          html += `<td class="py-3 px-6 font-semibold text-gray-800 align-top border-r border-gray-200" rowspan="${items.length}">${day}</td>`;
         }
-        html += `<td style="padding:10px;border:1px solid black;">${it.time_range}</td>`;
-        html += `<td style="padding:10px;border:1px solid black;">${it.subject}</td>`;
-        html += `<td style="padding:10px;border:1px solid black;">${it.classroom}</td>`;
+        html += `<td class="py-3 px-6 text-gray-700">${it.time_range}</td>`;
+        html += `<td class="py-3 px-6 font-medium text-gray-800">${it.subject}</td>`;
+        html += `<td class="py-3 px-6"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${it.classroom}</span></td>`;
         html += "</tr>";
       }
     }
 
     html += `</tbody></table></div>`;
     showHTML(html);
+    addSearchFeature(['Day', 'Time', 'Subject', 'Room']);
   }
 
   async function loadExams(){
-    showHTML('<div class="text-gray-400">Loading exams...</div>');
+    showHTML('<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-amber-500 mb-3"></i><p class="text-gray-600">Loading exams...</p></div>');
     const res = await fetch(`/api/exams?semester=${encodeURIComponent(sem.value)}`);
     const rows = await res.json();
-    if(!rows.length){ showHTML('<div class="text-gray-400">No exams scheduled for this semester.</div>'); return; }
-    let html = `<h2 class="text-lg font-semibold mb-3">📝 Exams — Semester ${sem.value}</h2>`;
-    html += `<table class="w-full"><thead><tr><th>Subject</th><th>Date</th><th>Time</th><th>Room</th></tr></thead><tbody>`;
-    rows.forEach(r => {
-      html += `<tr><td style="padding:10px">${r.subject}</td><td style="padding:10px">${r.date}</td><td style="padding:10px">${r.time}</td><td style="padding:10px">${r.classroom}</td></tr>`;
+    if(!rows.length){ showHTML('<div class="text-center py-12 text-gray-500">No exams scheduled for this semester.</div>'); return; }
+    let html = `<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><i class="fas fa-file-alt text-amber-500"></i> Exams — Semester ${sem.value}</h2>`;
+    html += `<div class="rounded-xl overflow-hidden border border-gray-200"><table class="w-full"><thead class="bg-gradient-to-r from-amber-500 to-amber-600 text-white"><tr><th class="py-4 px-6 text-left">Subject</th><th class="py-4 px-6 text-left">Date</th><th class="py-4 px-6 text-left">Time</th><th class="py-4 px-6 text-left">Room</th></tr></thead><tbody>`;
+    rows.forEach((r, index) => {
+      const rowClass = index % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+      html += `<tr class="${rowClass} hover:bg-amber-50 transition-colors"><td class="py-3 px-6 font-medium text-gray-800">${r.subject}</td><td class="py-3 px-6 text-gray-700">${r.date}</td><td class="py-3 px-6 text-gray-700">${r.time}</td><td class="py-3 px-6"><span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">${r.classroom}</span></td></tr>`;
     });
-    html += `</tbody></table>`;
+    html += `</tbody></table></div>`;
     showHTML(html);
+    addSearchFeature(['Subject', 'Date', 'Time', 'Room']);
   }
 
   async function loadCourses(){
-    showHTML('<div class="text-gray-400">Loading courses...</div>');
+    showHTML('<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-green-500 mb-3"></i><p class="text-gray-600">Loading courses...</p></div>');
     const res = await fetch(`/api/courses?semester=${encodeURIComponent(sem.value)}`);
     const rows = await res.json();
-    if(!rows.length){ showHTML('<div class="text-gray-400">No courses for this semester.</div>'); return; }
-    let html = `<h2 class="text-lg font-semibold mb-3">📚 Courses — Semester ${sem.value}</h2>`;
-    html += `<table class="w-full"><thead><tr><th>Course</th><th>Duration</th><th>Fee</th></tr></thead><tbody>`;
-    rows.forEach(r => {
-      html += `<tr><td style="padding:10px">${r.course_name}</td><td style="padding:10px">${r.duration}</td><td style="padding:10px">${r.fee}</td></tr>`;
+    if(!rows.length){ showHTML('<div class="text-center py-12 text-gray-500">No courses for this semester.</div>'); return; }
+    let html = `<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><i class="fas fa-book text-green-500"></i> Courses — Semester ${sem.value}</h2>`;
+    html += `<div class="rounded-xl overflow-hidden border border-gray-200"><table class="w-full"><thead class="bg-gradient-to-r from-green-500 to-green-600 text-white"><tr><th class="py-4 px-6 text-left">Course</th><th class="py-4 px-6 text-left">Duration</th><th class="py-4 px-6 text-left">Fee</th></tr></thead><tbody>`;
+    rows.forEach((r, index) => {
+      const rowClass = index % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+      html += `<tr class="${rowClass} hover:bg-green-50 transition-colors"><td class="py-3 px-6 font-medium text-gray-800">${r.course_name}</td><td class="py-3 px-6 text-gray-700">${r.duration}</td><td class="py-3 px-6 text-gray-700">${r.fee}</td></tr>`;
     });
-    html += `</tbody></table>`;
+    html += `</tbody></table></div>`;
     showHTML(html);
+    addSearchFeature(['Course', 'Duration', 'Fee']);
   }
 
   async function loadSeating(){
-    showHTML('<div class="text-gray-400">Loading seating...</div>');
+    showHTML('<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-purple-500 mb-3"></i><p class="text-gray-600">Loading seating...</p></div>');
     const res = await fetch(`/api/seating?semester=${encodeURIComponent(sem.value)}`);
     const rows = await res.json();
-    if(!rows.length){ showHTML('<div class="text-gray-400">No seating data for this semester.</div>'); return; }
-    let html = `<h2 class="text-lg font-semibold mb-3">💺 Exam Seating — Semester ${sem.value}</h2>`;
-    html += `<table class="w-full"><thead><tr><th>Subject</th><th>Student</th><th>USN</th><th>Room</th><th>Seat</th></tr></thead><tbody>`;
-    rows.forEach(r => {
-      html += `<tr><td style="padding:10px">${r.subject}</td><td style="padding:10px">${r.student_name}</td><td style="padding:10px">${r.usn}</td><td style="padding:10px">${r.classroom}</td><td style="padding:10px">${r.seat_number}</td></tr>`;
+    if(!rows.length){ showHTML('<div class="text-center py-12 text-gray-500">No seating data for this semester.</div>'); return; }
+    let html = `<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><i class="fas fa-chair text-purple-500"></i> Exam Seating — Semester ${sem.value}</h2>`;
+    html += `<div class="rounded-xl overflow-hidden border border-gray-200"><table class="w-full"><thead class="bg-gradient-to-r from-purple-500 to-purple-600 text-white"><tr><th class="py-4 px-6 text-left">Subject</th><th class="py-4 px-6 text-left">Student</th><th class="py-4 px-6 text-left">USN</th><th class="py-4 px-6 text-left">Room</th><th class="py-4 px-6 text-left">Seat</th></tr></thead><tbody>`;
+    rows.forEach((r, index) => {
+      const rowClass = index % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+      html += `<tr class="${rowClass} hover:bg-purple-50 transition-colors"><td class="py-3 px-6 font-medium text-gray-800">${r.subject}</td><td class="py-3 px-6 text-gray-700">${r.student_name}</td><td class="py-3 px-6 font-mono text-gray-600">${r.usn}</td><td class="py-3 px-6"><span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">${r.classroom}</span></td><td class="py-3 px-6"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">${r.seat_number}</span></td></tr>`;
     });
-    html += `</tbody></table>`;
+    html += `</tbody></table></div>`;
     showHTML(html);
+    addSearchFeature(['Subject', 'Student', 'USN', 'Room', 'Seat']);
   }
 
   document.getElementById('btn-timetable').addEventListener('click', loadTimetable);

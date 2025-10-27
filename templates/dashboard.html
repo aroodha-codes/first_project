@@ -1,123 +1,233 @@
-<!-- templates/dashboard.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>body{background:#000;color:#fff;font-family:Inter,system-ui,-apple-system}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SDMIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
-<body class="min-h-screen p-4">
-  <div class="max-w-6xl mx-auto">
-    <div class="flex items-center justify-between mb-4">
-      <h1 class="text-2xl font-bold">Admin Dashboard — ADE</h1>
-      <div class="flex gap-2">
-        <a href="/" class="px-3 py-2 border border-neutral-800 rounded">View site</a>
-        <a href="/logout" class="px-3 py-2 bg-red-700 rounded">Logout</a>
-      </div>
+<body class="gradient-bg min-h-screen p-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-purple-100 p-3 rounded-xl">
+                        <i class="fas fa-graduation-cap text-2xl text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Admin Dashboard — SDMIT</h1>
+                        <p class="text-gray-600">Manage timetable, exams, courses, and seating arrangements</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <a href="/" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center">
+                        <i class="fas fa-eye mr-2"></i>View Site
+                    </a>
+                    <a href="/logout" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <!-- Tab Navigation -->
+            <div class="flex gap-3 mb-6">
+                <button class="tab-btn px-4 py-3 rounded-lg bg-purple-600 text-white font-semibold transition-colors flex items-center" data-tab="tt">
+                    <i class="fas fa-calendar-alt mr-2"></i>Timetable
+                </button>
+                <button class="tab-btn px-4 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition-colors flex items-center" data-tab="ex">
+                    <i class="fas fa-file-alt mr-2"></i>Exams
+                </button>
+                <button class="tab-btn px-4 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition-colors flex items-center" data-tab="co">
+                    <i class="fas fa-book mr-2"></i>Courses
+                </button>
+                <button class="tab-btn px-4 py-3 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition-colors flex items-center" data-tab="se">
+                    <i class="fas fa-chair mr-2"></i>Seating
+                </button>
+            </div>
+
+            <!-- Timetable Management -->
+            <div id="tt" class="tab-panel">
+                <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-plus-circle text-green-500 mr-2"></i>Add New Timetable Entry
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
+                        <select id="tt-sem" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Semester</option>
+                            <option>1</option><option>2</option><option>3</option><option>4</option>
+                            <option>5</option><option>6</option><option>7</option><option>8</option>
+                        </select>
+                        <select id="tt-day" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Day</option>
+                            <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+                            <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+                        </select>
+                        <input id="tt-time" placeholder="Time Range" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="tt-sub" placeholder="Subject" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="tt-room" placeholder="Room" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <div class="flex gap-2">
+                            <button id="tt-add" class="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                                <i class="fas fa-plus mr-1"></i>Add
+                            </button>
+                            <button id="tt-update" class="flex-1 bg-yellow-500 text-white px-3 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center">
+                                <i class="fas fa-edit mr-1"></i>Update
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="tt-refresh" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Refresh
+                        </button>
+                        <button id="tt-delete" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center">
+                            <i class="fas fa-trash mr-2"></i>Delete Selected
+                        </button>
+                    </div>
+                </div>
+                <div id="tt-list" class="max-h-96 overflow-auto border border-gray-200 rounded-lg p-4 bg-white"></div>
+            </div>
+
+            <!-- Exams Management -->
+            <div id="ex" class="tab-panel hidden">
+                <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-plus-circle text-green-500 mr-2"></i>Add New Exam
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
+                        <select id="ex-sem" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Semester</option><option>1</option><option>2</option><option>3</option><option>4</option>
+                            <option>5</option><option>6</option><option>7</option><option>8</option>
+                        </select>
+                        <input id="ex-sub" placeholder="Subject" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="ex-date" placeholder="YYYY-MM-DD" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="ex-time" placeholder="Time" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="ex-room" placeholder="Room" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <div class="flex gap-2">
+                            <button id="ex-add" class="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                                <i class="fas fa-plus mr-1"></i>Add
+                            </button>
+                            <button id="ex-update" class="flex-1 bg-yellow-500 text-white px-3 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center">
+                                <i class="fas fa-edit mr-1"></i>Update
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="ex-refresh" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Refresh
+                        </button>
+                        <button id="ex-delete" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center">
+                            <i class="fas fa-trash mr-2"></i>Delete Selected
+                        </button>
+                    </div>
+                </div>
+                <div id="ex-list" class="max-h-96 overflow-auto border border-gray-200 rounded-lg p-4 bg-white"></div>
+            </div>
+
+            <!-- Courses Management -->
+            <div id="co" class="tab-panel hidden">
+                <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-plus-circle text-green-500 mr-2"></i>Add New Course
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                        <select id="co-sem" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Semester</option><option>1</option><option>2</option><option>3</option><option>4</option>
+                            <option>5</option><option>6</option><option>7</option><option>8</option>
+                        </select>
+                        <input id="co-name" placeholder="Course name" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="co-duration" placeholder="Duration" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="co-fee" placeholder="Fee" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <div class="flex gap-2">
+                            <button id="co-add" class="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                                <i class="fas fa-plus mr-1"></i>Add
+                            </button>
+                            <button id="co-update" class="flex-1 bg-yellow-500 text-white px-3 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center">
+                                <i class="fas fa-edit mr-1"></i>Update
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="co-refresh" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Refresh
+                        </button>
+                        <button id="co-delete" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center">
+                            <i class="fas fa-trash mr-2"></i>Delete Selected
+                        </button>
+                    </div>
+                </div>
+                <div id="co-list" class="max-h-96 overflow-auto border border-gray-200 rounded-lg p-4 bg-white"></div>
+            </div>
+
+            <!-- Seating Management -->
+            <div id="se" class="tab-panel hidden">
+                <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-plus-circle text-green-500 mr-2"></i>Add New Seating Arrangement
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-7 gap-4 mb-4">
+                        <select id="se-sem" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Semester</option><option>1</option><option>2</option><option>3</option><option>4</option>
+                            <option>5</option><option>6</option><option>7</option><option>8</option>
+                        </select>
+                        <input id="se-sub" placeholder="Subject" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="se-stu" placeholder="Student name" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="se-usn" placeholder="USN" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="se-room" placeholder="Room" class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <input id="se-seat" placeholder="Seat no." class="px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+                        <div class="flex gap-2">
+                            <button id="se-add" class="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                                <i class="fas fa-plus mr-1"></i>Add
+                            </button>
+                            <button id="se-update" class="flex-1 bg-yellow-500 text-white px-3 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center">
+                                <i class="fas fa-edit mr-1"></i>Update
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="se-refresh" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Refresh
+                        </button>
+                        <button id="se-delete" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center">
+                            <i class="fas fa-trash mr-2"></i>Delete Selected
+                        </button>
+                    </div>
+                </div>
+                <div id="se-list" class="max-h-96 overflow-auto border border-gray-200 rounded-lg p-4 bg-white"></div>
+            </div>
+        </div>
     </div>
-
-    <div class="bg-neutral-900 border border-neutral-800 rounded p-4 space-y-6">
-
-      <div class="flex gap-2 mb-3">
-        <button class="tab-btn px-3 py-2 rounded bg-blue-600" data-tab="tt">Timetable</button>
-        <button class="tab-btn px-3 py-2 rounded bg-neutral-800" data-tab="ex">Exams</button>
-        <button class="tab-btn px-3 py-2 rounded bg-neutral-800" data-tab="co">Courses</button>
-        <button class="tab-btn px-3 py-2 rounded bg-neutral-800" data-tab="se">Seating</button>
-      </div>
-
-      <!-- Timetable -->
-      <div id="tt" class="tab-panel">
-        <div class="flex gap-2 mb-3 items-center">
-          <select id="tt-sem" class="px-3 py-2 bg-neutral-800 rounded">
-            <option value="">Semester</option>
-            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
-          </select>
-          <select id="tt-day" class="px-3 py-2 bg-neutral-800 rounded">
-            <option value="">Day</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
-          </select>
-          <input id="tt-time" placeholder="Time (e.g. 8:55 AM - 9:55 AM)" class="px-3 py-2 bg-neutral-800 rounded flex-1"/>
-          <input id="tt-sub" placeholder="Subject" class="px-3 py-2 bg-neutral-800 rounded" />
-          <input id="tt-room" placeholder="Room" class="px-3 py-2 bg-neutral-800 rounded" />
-          <button id="tt-add" class="bg-green-600 px-3 py-2 rounded">Add</button>
-          <button id="tt-update" class="bg-yellow-500 px-3 py-2 rounded">Update</button>
-        </div>
-        <div class="mb-2">
-          <button id="tt-refresh" class="px-3 py-2 bg-blue-600 rounded">Refresh</button>
-          <button id="tt-delete" class="px-3 py-2 bg-red-700 rounded">Delete Selected</button>
-        </div>
-        <div id="tt-list" class="max-h-64 overflow-auto border border-neutral-800 rounded p-2"></div>
-      </div>
-
-      <!-- Exams -->
-      <div id="ex" class="tab-panel hidden">
-        <div class="flex gap-2 mb-3 items-center">
-          <select id="ex-sem" class="px-3 py-2 bg-neutral-800 rounded">
-            <option value="">Semester</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
-          </select>
-          <input id="ex-sub" placeholder="Subject" class="px-3 py-2 bg-neutral-800 rounded" />
-          <input id="ex-date" placeholder="YYYY-MM-DD" class="px-3 py-2 bg-neutral-800 rounded" />
-          <input id="ex-time" placeholder="Time" class="px-3 py-2 bg-neutral-800 rounded" />
-          <input id="ex-room" placeholder="Room" class="px-3 py-2 bg-neutral-800 rounded" />
-          <button id="ex-add" class="bg-green-600 px-3 py-2 rounded">Add</button>
-          <button id="ex-update" class="bg-yellow-500 px-3 py-2 rounded">Update</button>
-        </div>
-        <div class="mb-2">
-          <button id="ex-refresh" class="px-3 py-2 bg-blue-600 rounded">Refresh</button>
-          <button id="ex-delete" class="px-3 py-2 bg-red-700 rounded">Delete Selected</button>
-        </div>
-        <div id="ex-list" class="max-h-64 overflow-auto border border-neutral-800 rounded p-2"></div>
-      </div>
-
-      <!-- Courses -->
-      <div id="co" class="tab-panel hidden">
-        <div class="flex gap-2 mb-3 items-center">
-          <select id="co-sem" class="px-3 py-2 bg-neutral-800 rounded">
-            <option value="">Semester</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
-          </select>
-          <input id="co-name" placeholder="Course name" class="px-3 py-2 bg-neutral-800 rounded flex-1" />
-          <input id="co-duration" placeholder="Duration" class="px-3 py-2 bg-neutral-800 rounded" />
-          <input id="co-fee" placeholder="Fee" class="px-3 py-2 bg-neutral-800 rounded" />
-          <button id="co-add" class="bg-green-600 px-3 py-2 rounded">Add</button>
-          <button id="co-update" class="bg-yellow-500 px-3 py-2 rounded">Update</button>
-        </div>
-        <div class="mb-2">
-          <button id="co-refresh" class="px-3 py-2 bg-blue-600 rounded">Refresh</button>
-          <button id="co-delete" class="px-3 py-2 bg-red-700 rounded">Delete Selected</button>
-        </div>
-        <div id="co-list" class="max-h-64 overflow-auto border border-neutral-800 rounded p-2"></div>
-      </div>
-
-      <!-- Seating -->
-      <div id="se" class="tab-panel hidden">
-        <div class="flex gap-2 mb-3 items-center">
-          <select id="se-sem" class="px-3 py-2 bg-neutral-800 rounded">
-            <option value="">Semester</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
-          </select>
-          <input id="se-sub" placeholder="Subject" class="px-3 py-2 bg-neutral-800 rounded" />
-          <input id="se-stu" placeholder="Student name" class="px-3 py-2 bg-neutral-800 rounded" />
-          <input id="se-usn" placeholder="USN" class="px-3 py-2 bg-neutral-800 rounded" />
-          <input id="se-room" placeholder="Room" class="px-3 py-2 bg-neutral-800 rounded" />
-          <input id="se-seat" placeholder="Seat no." class="px-3 py-2 bg-neutral-800 rounded" />
-          <button id="se-add" class="bg-green-600 px-3 py-2 rounded">Add</button>
-          <button id="se-update" class="bg-yellow-500 px-3 py-2 rounded">Update</button>
-        </div>
-        <div class="mb-2">
-          <button id="se-refresh" class="px-3 py-2 bg-blue-600 rounded">Refresh</button>
-          <button id="se-delete" class="px-3 py-2 bg-red-700 rounded">Delete Selected</button>
-        </div>
-        <div id="se-list" class="max-h-96 overflow-auto border border-neutral-800 rounded p-2"></div>
-      </div>
-
-    </div>
-  </div>
 
 <script>
   // Tabs
   document.querySelectorAll('.tab-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.tab-btn').forEach(b=>{ b.classList.remove('bg-blue-600'); b.classList.add('bg-neutral-800'); });
-      btn.classList.remove('bg-neutral-800'); btn.classList.add('bg-blue-600');
+      document.querySelectorAll('.tab-btn').forEach(b=>{ b.classList.remove('bg-purple-600', 'text-white'); b.classList.add('bg-gray-200', 'text-gray-700'); });
+      btn.classList.remove('bg-gray-200', 'text-gray-700'); btn.classList.add('bg-purple-600', 'text-white');
       const which = btn.dataset.tab;
       document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden'));
       document.getElementById(which).classList.remove('hidden');
@@ -144,12 +254,12 @@
   async function refresh_tt(){
     const sem = document.getElementById('tt-sem').value;
     const list = document.getElementById('tt-list');
-    if(!sem){ list.innerHTML='<div class="p-2 text-gray-400">Select semester</div>'; return; }
+    if(!sem){ list.innerHTML='<div class="p-4 text-gray-500 text-center">Select semester</div>'; return; }
     const res = await fetch(`/admin/timetable/list?semester=${encodeURIComponent(sem)}`);
     const rows = await res.json();
-    if(!rows.length){ list.innerHTML='<div class="p-2 text-gray-400">No rows</div>'; return; }
-    let html = '<table class="w-full text-sm"><thead><tr><th></th><th>Day</th><th>Time</th><th>Subject</th><th>Room</th></tr></thead><tbody>';
-    rows.forEach(r=> html += `<tr onclick="tt_load(${r.id})"><td><input class="chk" data-id="${r.id}" type="checkbox"></td><td>${r.day}</td><td>${r.time_range}</td><td>${r.subject}</td><td>${r.classroom}</td></tr>`);
+    if(!rows.length){ list.innerHTML='<div class="p-4 text-gray-500 text-center">No timetable entries</div>'; return; }
+    let html = '<table class="w-full text-sm bg-white rounded-lg overflow-hidden"><thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white"><tr><th class="p-3"></th><th class="p-3">Day</th><th class="p-3">Time</th><th class="p-3">Subject</th><th class="p-3">Room</th></tr></thead><tbody>';
+    rows.forEach(r=> html += `<tr class="border-b border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors" onclick="tt_load(${r.id})"><td class="p-3"><input class="chk" data-id="${r.id}" type="checkbox"></td><td class="p-3 font-medium">${r.day}</td><td class="p-3">${r.time_range}</td><td class="p-3">${r.subject}</td><td class="p-3"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${r.classroom}</span></td></tr>`);
     html += '</tbody></table>'; list.innerHTML = html;
   }
   window.tt_load = async function(id){
@@ -165,7 +275,7 @@
   let ex_selected = null;
   document.getElementById('ex-add').addEventListener('click', async ()=>{ const semester=document.getElementById('ex-sem').value; const subject=document.getElementById('ex-sub').value; const date=document.getElementById('ex-date').value; const time=document.getElementById('ex-time').value; const room=document.getElementById('ex-room').value; if(!semester||!subject||!date||!time||!room){ alert('All fields required'); return;} await post('/admin/exams/add',{semester, subject, date, time, classroom:room}); refresh_ex(); });
   document.getElementById('ex-refresh').addEventListener('click', refresh_ex);
-  async function refresh_ex(){ const sem=document.getElementById('ex-sem').value; const list=document.getElementById('ex-list'); if(!sem){ list.innerHTML='<div class="p-2 text-gray-400">Select semester</div>'; return; } const res=await fetch(`/admin/exams/list?semester=${encodeURIComponent(sem)}`); const rows=await res.json(); if(!rows.length){ list.innerHTML='<div class="p-2 text-gray-400">No rows</div>'; return; } let html='<table class="w-full text-sm"><thead><tr><th></th><th>Subject</th><th>Date</th><th>Time</th><th>Room</th></tr></thead><tbody>'; rows.forEach(r=> html+=`<tr onclick="ex_load(${r.id})"><td><input class="chk" data-id="${r.id}" type="checkbox"></td><td>${r.subject}</td><td>${r.date}</td><td>${r.time}</td><td>${r.classroom}</td></tr>`); html+='</tbody></table>'; list.innerHTML=html; }
+  async function refresh_ex(){ const sem=document.getElementById('ex-sem').value; const list=document.getElementById('ex-list'); if(!sem){ list.innerHTML='<div class="p-4 text-gray-500 text-center">Select semester</div>'; return; } const res=await fetch(`/admin/exams/list?semester=${encodeURIComponent(sem)}`); const rows=await res.json(); if(!rows.length){ list.innerHTML='<div class="p-4 text-gray-500 text-center">No exam entries</div>'; return; } let html='<table class="w-full text-sm bg-white rounded-lg overflow-hidden"><thead class="bg-gradient-to-r from-amber-500 to-amber-600 text-white"><tr><th class="p-3"></th><th class="p-3">Subject</th><th class="p-3">Date</th><th class="p-3">Time</th><th class="p-3">Room</th></tr></thead><tbody>'; rows.forEach(r=> html+=`<tr class="border-b border-gray-200 hover:bg-amber-50 cursor-pointer transition-colors" onclick="ex_load(${r.id})"><td class="p-3"><input class="chk" data-id="${r.id}" type="checkbox"></td><td class="p-3 font-medium">${r.subject}</td><td class="p-3">${r.date}</td><td class="p-3">${r.time}</td><td class="p-3"><span class="bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs">${r.classroom}</span></td></tr>`); html+='</tbody></table>'; list.innerHTML=html; }
   window.ex_load = async function(id){ const sem=document.getElementById('ex-sem').value; const res=await fetch(`/admin/exams/list?semester=${encodeURIComponent(sem)}`); const rows=await res.json(); const r=rows.find(x=>x.id==id); if(!r) return; ex_selected=r.id; document.getElementById('ex-sub').value=r.subject; document.getElementById('ex-date').value=r.date; document.getElementById('ex-time').value=r.time; document.getElementById('ex-room').value=r.classroom; }
   document.getElementById('ex-update').addEventListener('click', async ()=>{ if(!ex_selected){ alert('Select row'); return; } const semester=document.getElementById('ex-sem').value; const subject=document.getElementById('ex-sub').value; const date=document.getElementById('ex-date').value; const time=document.getElementById('ex-time').value; const classroom=document.getElementById('ex-room').value; await post('/admin/exams/update',{id:ex_selected, semester, subject, date, time, classroom}); refresh_ex(); });
   document.getElementById('ex-delete').addEventListener('click', async ()=>{ const checks=Array.from(document.querySelectorAll('#ex-list .chk')).filter(c=>c.checked); if(!checks.length){ alert('Select rows'); return; } if(!confirm('Delete selected?')) return; for(const c of checks){ await post('/admin/exams/delete',{id:c.dataset.id}); } refresh_ex(); });
@@ -174,7 +284,7 @@
   let co_selected=null;
   document.getElementById('co-add').addEventListener('click', async ()=>{ const semester=document.getElementById('co-sem').value; const name=document.getElementById('co-name').value; const dur=document.getElementById('co-duration').value; const fee=document.getElementById('co-fee').value; if(!semester||!name){ alert('Semester and course required'); return; } await post('/admin/courses/add',{semester, course_name:name, duration:dur, fee}); refresh_co(); });
   document.getElementById('co-refresh').addEventListener('click', refresh_co);
-  async function refresh_co(){ const sem=document.getElementById('co-sem').value; const list=document.getElementById('co-list'); if(!sem){ list.innerHTML='<div class="p-2 text-gray-400">Select semester</div>'; return; } const res=await fetch(`/admin/courses/list?semester=${encodeURIComponent(sem)}`); const rows=await res.json(); if(!rows.length){ list.innerHTML='<div class="p-2 text-gray-400">No rows</div>'; return; } let html='<table class="w-full text-sm"><thead><tr><th></th><th>Course</th><th>Duration</th><th>Fee</th></tr></thead><tbody>'; rows.forEach(r=> html+=`<tr onclick="co_load(${r.id})"><td><input class="chk" data-id="${r.id}" type="checkbox"></td><td>${r.course_name}</td><td>${r.duration}</td><td>${r.fee}</td></tr>`); html+='</tbody></table>'; list.innerHTML=html; }
+  async function refresh_co(){ const sem=document.getElementById('co-sem').value; const list=document.getElementById('co-list'); if(!sem){ list.innerHTML='<div class="p-4 text-gray-500 text-center">Select semester</div>'; return; } const res=await fetch(`/admin/courses/list?semester=${encodeURIComponent(sem)}`); const rows=await res.json(); if(!rows.length){ list.innerHTML='<div class="p-4 text-gray-500 text-center">No course entries</div>'; return; } let html='<table class="w-full text-sm bg-white rounded-lg overflow-hidden"><thead class="bg-gradient-to-r from-green-500 to-green-600 text-white"><tr><th class="p-3"></th><th class="p-3">Course</th><th class="p-3">Duration</th><th class="p-3">Fee</th></tr></thead><tbody>'; rows.forEach(r=> html+=`<tr class="border-b border-gray-200 hover:bg-green-50 cursor-pointer transition-colors" onclick="co_load(${r.id})"><td class="p-3"><input class="chk" data-id="${r.id}" type="checkbox"></td><td class="p-3 font-medium">${r.course_name}</td><td class="p-3">${r.duration}</td><td class="p-3">${r.fee}</td></tr>`); html+='</tbody></table>'; list.innerHTML=html; }
   window.co_load = async function(id){ const sem=document.getElementById('co-sem').value; const res=await fetch(`/admin/courses/list?semester=${encodeURIComponent(sem)}`); const rows=await res.json(); const r=rows.find(x=>x.id==id); if(!r) return; co_selected=r.id; document.getElementById('co-name').value=r.course_name; document.getElementById('co-duration').value=r.duration; document.getElementById('co-fee').value=r.fee; }
   document.getElementById('co-update').addEventListener('click', async ()=>{ if(!co_selected){ alert('Select row'); return; } const semester=document.getElementById('co-sem').value; const course_name=document.getElementById('co-name').value; const duration=document.getElementById('co-duration').value; const fee=document.getElementById('co-fee').value; await post('/admin/courses/update',{id:co_selected, semester, course_name, duration, fee}); refresh_co(); });
   document.getElementById('co-delete').addEventListener('click', async ()=>{ const checks=Array.from(document.querySelectorAll('#co-list .chk')).filter(c=>c.checked); if(!checks.length){ alert('Select rows'); return; } if(!confirm('Delete selected?')) return; for(const c of checks){ await post('/admin/courses/delete',{id:c.dataset.id}); } refresh_co(); });
@@ -183,7 +293,7 @@
   let se_selected=null;
   document.getElementById('se-add').addEventListener('click', async ()=>{ const semester=document.getElementById('se-sem').value; const subject=document.getElementById('se-sub').value; const student=document.getElementById('se-stu').value; const usn=document.getElementById('se-usn').value; const room=document.getElementById('se-room').value; const seat=document.getElementById('se-seat').value; if(!semester||!subject||!student||!usn||!room||!seat){ alert('All fields required'); return; } await post('/admin/seating/add',{semester, subject, student_name:student, usn, classroom:room, seat_number:seat}); refresh_se(); });
   document.getElementById('se-refresh').addEventListener('click', refresh_se);
-  async function refresh_se(){ const sem=document.getElementById('se-sem').value; const list=document.getElementById('se-list'); if(!sem){ list.innerHTML='<div class="p-2 text-gray-400">Select semester</div>'; return; } const res=await fetch(`/admin/seating/list?semester=${encodeURIComponent(sem)}`); const rows=await res.json(); if(!rows.length){ list.innerHTML='<div class="p-2 text-gray-400">No rows</div>'; return; } let html='<table class="w-full text-sm"><thead><tr><th></th><th>Subject</th><th>Student</th><th>USN</th><th>Room</th><th>Seat</th></tr></thead><tbody>'; rows.forEach(r=> html+=`<tr onclick="se_load(${r.id})"><td><input class="chk" data-id="${r.id}" type="checkbox"></td><td>${r.subject}</td><td>${r.student_name}</td><td>${r.usn}</td><td>${r.classroom}</td><td>${r.seat_number}</td></tr>`); html+='</tbody></table>'; list.innerHTML=html; }
+  async function refresh_se(){ const sem=document.getElementById('se-sem').value; const list=document.getElementById('se-list'); if(!sem){ list.innerHTML='<div class="p-4 text-gray-500 text-center">Select semester</div>'; return; } const res=await fetch(`/admin/seating/list?semester=${encodeURIComponent(sem)}`); const rows=await res.json(); if(!rows.length){ list.innerHTML='<div class="p-4 text-gray-500 text-center">No seating entries</div>'; return; } let html='<table class="w-full text-sm bg-white rounded-lg overflow-hidden"><thead class="bg-gradient-to-r from-purple-500 to-purple-600 text-white"><tr><th class="p-3"></th><th class="p-3">Subject</th><th class="p-3">Student</th><th class="p-3">USN</th><th class="p-3">Room</th><th class="p-3">Seat</th></tr></thead><tbody>'; rows.forEach(r=> html+=`<tr class="border-b border-gray-200 hover:bg-purple-50 cursor-pointer transition-colors" onclick="se_load(${r.id})"><td class="p-3"><input class="chk" data-id="${r.id}" type="checkbox"></td><td class="p-3 font-medium">${r.subject}</td><td class="p-3">${r.student_name}</td><td class="p-3 font-mono">${r.usn}</td><td class="p-3"><span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">${r.classroom}</span></td><td class="p-3"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">${r.seat_number}</span></td></tr>`); html+='</tbody></table>'; list.innerHTML=html; }
   window.se_load = async function(id){ const sem=document.getElementById('se-sem').value; const res=await fetch(`/admin/seating/list?semester=${encodeURIComponent(sem)}`); const rows=await res.json(); const r=rows.find(x=>x.id==id); if(!r) return; se_selected=r.id; document.getElementById('se-sub').value=r.subject; document.getElementById('se-stu').value=r.student_name; document.getElementById('se-usn').value=r.usn; document.getElementById('se-room').value=r.classroom; document.getElementById('se-seat').value=r.seat_number; }
   document.getElementById('se-update').addEventListener('click', async ()=>{ if(!se_selected){ alert('Select row'); return; } const semester=document.getElementById('se-sem').value; const subject=document.getElementById('se-sub').value; const student=document.getElementById('se-stu').value; const usn=document.getElementById('se-usn').value; const classroom=document.getElementById('se-room').value; const seat=document.getElementById('se-seat').value; await post('/admin/seating/update',{id:se_selected, semester, subject, student_name:student, usn, classroom, seat_number:seat}); refresh_se(); });
   document.getElementById('se-delete').addEventListener('click', async ()=>{ const checks=Array.from(document.querySelectorAll('#se-list .chk')).filter(c=>c.checked); if(!checks.length){ alert('Select rows'); return; } if(!confirm('Delete selected?')) return; for(const c of checks){ await post('/admin/seating/delete',{id:c.dataset.id}); } refresh_se(); });
