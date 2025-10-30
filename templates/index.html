@@ -95,68 +95,10 @@
 <script>
   const out = document.getElementById('output');
   const sem = document.getElementById('semester');
-  let currentData = [];
-  let currentView = '';
 
   function showHTML(html){ 
     out.innerHTML = html; 
     out.scrollTo({ top:0 }); 
-  }
-
-  // Search functionality
-  function addSearchFeature(columns) {
-    const searchHtml = `
-      <div class="mb-6">
-        <div class="relative max-w-md mx-auto">
-          <input type="text" id="searchInput" placeholder="Search in ${columns.join(', ')}..." 
-                 class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm">
-          <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-          <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">${columns.length} columns</span>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    const content = out.innerHTML;
-    out.innerHTML = searchHtml + content;
-    
-    const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', function(e) {
-      const searchTerm = e.target.value.toLowerCase();
-      filterTable(searchTerm, columns);
-    });
-  }
-
-  function filterTable(searchTerm, columns) {
-    const tables = out.getElementsByTagName('table');
-    if (tables.length === 0) return;
-    
-    const table = tables[0];
-    const tbody = table.getElementsByTagName('tbody')[0];
-    const rows = tbody.getElementsByTagName('tr');
-    
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      let found = false;
-      const cells = row.getElementsByTagName('td');
-      
-      for (let j = 0; j < cells.length; j++) {
-        const cellText = cells[j].textContent.toLowerCase();
-        if (cellText.includes(searchTerm)) {
-          found = true;
-          break;
-        }
-      }
-      
-      if (found) {
-        row.style.display = '';
-        row.classList.add('bg-yellow-50');
-        setTimeout(() => row.classList.remove('bg-yellow-50'), 1000);
-      } else {
-        row.style.display = 'none';
-      }
-    }
   }
 
   async function loadTimetable(){
@@ -174,25 +116,19 @@
     let html = `<h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><i class="fas fa-calendar-alt text-blue-500"></i> Timetable — Semester ${sem.value}</h2>`;
     html += `<div class="rounded-xl overflow-hidden border border-gray-200"><table class="w-full"><thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white"><tr><th class="py-4 px-6 text-left">Day</th><th class="py-4 px-6 text-left">Time</th><th class="py-4 px-6 text-left">Subject</th><th class="py-4 px-6 text-left">Room</th></tr></thead><tbody>`;
 
-    for(const day of Object.keys(grouped)){
-      const items = grouped[day];
-      for(let i=0;i<items.length;i++){
-        const it = items[i];
-        const rowClass = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
-        html += `<tr class="${rowClass} hover:bg-blue-50 transition-colors">`;
-        if(i===0){
-          html += `<td class="py-3 px-6 font-semibold text-gray-800 align-top border-r border-gray-200" rowspan="${items.length}">${day}</td>`;
-        }
-        html += `<td class="py-3 px-6 text-gray-700">${it.time_range}</td>`;
-        html += `<td class="py-3 px-6 font-medium text-gray-800">${it.subject}</td>`;
-        html += `<td class="py-3 px-6"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${it.classroom}</span></td>`;
-        html += "</tr>";
-      }
-    }
+    // Simple table without rowspan - each row has all data
+    rows.forEach((r, index) => {
+      const rowClass = index % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+      html += `<tr class="${rowClass} hover:bg-blue-50 transition-colors">`;
+      html += `<td class="py-3 px-6 font-semibold text-gray-800">${r.day}</td>`;
+      html += `<td class="py-3 px-6 text-gray-700">${r.time_range}</td>`;
+      html += `<td class="py-3 px-6 font-medium text-gray-800">${r.subject}</td>`;
+      html += `<td class="py-3 px-6"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${r.classroom}</span></td>`;
+      html += "</tr>";
+    });
 
     html += `</tbody></table></div>`;
     showHTML(html);
-    addSearchFeature(['Day', 'Time', 'Subject', 'Room']);
   }
 
   async function loadExams(){
@@ -208,7 +144,6 @@
     });
     html += `</tbody></table></div>`;
     showHTML(html);
-    addSearchFeature(['Subject', 'Date', 'Time', 'Room']);
   }
 
   async function loadCourses(){
@@ -224,7 +159,6 @@
     });
     html += `</tbody></table></div>`;
     showHTML(html);
-    addSearchFeature(['Course', 'Duration', 'Fee']);
   }
 
   async function loadSeating(){
@@ -240,7 +174,6 @@
     });
     html += `</tbody></table></div>`;
     showHTML(html);
-    addSearchFeature(['Subject', 'Student', 'USN', 'Room', 'Seat']);
   }
 
   document.getElementById('btn-timetable').addEventListener('click', loadTimetable);
